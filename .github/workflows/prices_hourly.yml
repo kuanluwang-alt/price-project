@@ -1,0 +1,50 @@
+name: Record crypto prices (hourly)
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # Every hour at minute 0 (UTC)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prices-hourly
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run script
+        env:
+          CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
+        run: |
+          python regular/prices.py
+
+      - name: Commit & push if changed
+        run: |
+          if git status --porcelain | grep -E "^ M regular/prices\.csv|^\?\? regular/prices\.csv"; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add regular/prices.csv
+            git commit -m "Update prices.csv (hourly)"
+            git push
+          else
+            echo "No changes to commit."
+          fi
