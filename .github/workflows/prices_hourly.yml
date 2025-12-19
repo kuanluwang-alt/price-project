@@ -2,7 +2,7 @@ name: Record crypto prices (hourly)
 
 on:
   schedule:
-    - cron: "0 * * * *"   # Every hour at minute 0 (UTC)
+    - cron: "*/5 * * * *"  # Every hour at minute 0 (UTC)
   workflow_dispatch: {}
 
 permissions:
