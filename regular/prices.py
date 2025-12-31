@@ -204,7 +204,8 @@ def parse_symbols_from_env(default: list[str]) -> list[str]:
 
 
 def main():
-    default_symbols = ["BTC", "ETH", "ADA", "XRP", "SOL", "SUI", "AVAX", "POL", "API3"]
+    default_symbols = ["BTC","ETH","ADA","XRP","SOL","SUI","AVAX","POL","API3",
+ "USDT","USDC","DOT","BNB","TRX","LTC","DAI","WETH"]
     symbols = parse_symbols_from_env(default_symbols)
     convert = (CONVERT_ENV or "USD").strip().upper()
 
